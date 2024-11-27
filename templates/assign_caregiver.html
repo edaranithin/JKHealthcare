@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assign Caregiver</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <!-- SweetAlert2 CSS for notifications -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Custom CSS for consistent style (from Admin Dashboard) -->
+    <style>
+        body {
+            padding-top: 20px;
+        }
+        .container {
+            max-width: 960px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>Assign Caregiver to Patient</h1>
+        <hr>
+
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul class="list-unstyled">
+                    {% for message in messages %}
+                        <li class="alert alert-success">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <div class="alert alert-info" role="alert">
+            <strong>Patient: {{ patient.name }}</strong><br>
+            {% if patient.caregiver %}
+                <p>Current Caregiver: {{ patient.caregiver.name }}</p>
+                <a href="{{ url_for('remove_caregiver', appointment_id=patient.caregiver.appointment.id) }}" class="btn btn-danger">Remove Caregiver</a>
+            {% else %}
+                <p>No caregiver assigned yet.</p>
+            {% endif %}
+            <br>
+            Select a caregiver and schedule the appointment.
+        </div>
+
+        <form method="POST">
+            <div class="form-group">
+                <label for="caregiver">Choose Caregiver</label>
+                <select class="form-control" id="caregiver" name="caregiver" required>
+                    <option value="" disabled selected>Select Caregiver</option>
+                    {% for caregiver in caregivers %}
+                        <option value="{{ caregiver.id }}" {% if caregiver.id == patient.caregiver_id %} selected {% endif %}>{{ caregiver.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="schedule_date">Schedule Date</label>
+                <input type="text" class="form-control" id="schedule_date" name="schedule_date" placeholder="YYYY-MM-DD" required>
+            </div>
+
+            <button type="submit" class="btn btn-success">Assign Caregiver</button>
+            <a href="{{ url_for('admin_dashboard') }}" class="btn btn-secondary ml-2">Cancel</a>
+        </form>
+    </div>
+
+    <!-- JavaScript dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

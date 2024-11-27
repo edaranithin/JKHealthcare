@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Appointment</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Update Appointment for {{ appointment.patient.name }}</h2>
+        
+        <form method="POST">
+            <!-- Schedule Date Input -->
+            <div class="form-group">
+                <label for="schedule_date">Schedule Date:</label>
+                <input type="text" id="schedule_date" name="schedule_date" class="form-control" value="{{ appointment.schedule_date }}" required>
+            </div>
+            
+            <!-- Notes Input -->
+            <div class="form-group">
+                <label for="notes">Notes:</label>
+                <textarea id="notes" name="notes" class="form-control" rows="4">{{ appointment.notes }}</textarea>
+            </div>
+            
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-primary">Update Appointment</button>
+        </form>
+
+        <!-- Back to Dashboard Link -->
+        <div class="mt-3">
+            <a href="{{ url_for('caregiver_dashboard') }}">Back to Dashboard</a>
+        </div>
+    </div>
+
+    <!-- Optional JavaScript -->
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+</body>
+</html>

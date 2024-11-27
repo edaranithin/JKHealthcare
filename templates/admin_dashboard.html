@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+    <div class="container mt-4">
+        <h1>Admin Dashboard</h1>
+        <hr>
+
+        <div class="alert alert-info" role="alert">
+            <strong>Welcome, {{ current_user.name }}!</strong> You can manage patients, caregivers, and appointments here.
+            <a href="{{ url_for('logout') }}" class="btn btn-danger btn-sm float-right ml-2">Logout</a>
+        </div>
+
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul class="list-unstyled">
+                    {% for message in messages %}
+                        <li class="alert alert-success">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <div class="row">
+            <!-- Patients Section -->
+            <div class="col-md-6">
+                <h3>Patients</h3>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Username</th>
+                            <th>Mobile</th>
+                            <th>Caregiver</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for patient in patients %}
+                            <tr>
+                                <td>{{ patient.name }}</td>
+                                <td>{{ patient.username }}</td>
+                                <td>{{ patient.mobile }}</td>
+                                <td>
+                                    {% if patient.appointments_as_patient %}
+                                        {% set caregiver = patient.appointments_as_patient[0].caregiver %}
+                                        {% if caregiver %}
+                                            <span>{{ caregiver.name }}</span>
+                                            <a href="{{ url_for('remove_caregiver', appointment_id=patient.appointments_as_patient[0].id) }}" class="btn btn-danger">Remove Caregiver</a>
+                                        {% else %}
+                                            <span>No caregiver assigned</span>
+                                        {% endif %}
+                                    {% else %}
+                                        <span>No caregiver assigned</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <a href="{{ url_for('edit_patient', patient_id=patient.id) }}" class="btn btn-warning btn-sm">Edit</a>
+                                    <a href="{{ url_for('delete_patient', patient_id=patient.id) }}" class="btn btn-danger btn-sm">Delete</a>
+                                    <a href="{{ url_for('assign_caregiver', patient_id=patient.id) }}" class="btn btn-info btn-sm mt-2">Assign Caregiver</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <a href="{{ url_for('add_patient') }}" class="btn btn-primary mt-3">Add New Patient</a>
+            </div>
+
+            <!-- Caregivers Section -->
+            <div class="col-md-6">
+                <h3>Caregivers</h3>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Username</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for caregiver in caregivers %}
+                            <tr>
+                                <td>{{ caregiver.name }}</td>
+                                <td>{{ caregiver.username }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <a href="{{ url_for('register_caregiver') }}" class="btn btn-primary mt-3">Add New Caregiver</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Optional JavaScript; choose one of the two! -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

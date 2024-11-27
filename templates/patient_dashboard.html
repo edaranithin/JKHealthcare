@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Dashboard</title>
+
+    <!-- Bootstrap CSS for consistent styling -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <!-- Custom CSS for consistent theme (from Admin and Caregiver Dashboard) -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+    <!-- SweetAlert2 CSS for alerts -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- Socket.IO JavaScript for real-time communication -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.0/socket.io.min.js"></script>
+    <script type="text/javascript">
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+        socket.on('schedule_change', function(data) {
+            alert(data.message);
+        });
+    </script>
+
+</head>
+<body>
+    <!-- Main Container -->
+    <div class="container mt-4">
+        <h1>Welcome, {{ current_user.name }} (Patient)</h1>
+
+        <!-- Profile Information -->
+        <div class="alert alert-info">
+            <p><strong>Profile Information:</strong></p>
+            <p><strong>Name:</strong> {{ current_user.name }}</p>
+            <p><strong>Username:</strong> {{ current_user.username }}</p>
+            <p><strong>Address:</strong> {{ current_user.address }}</p>
+            <p><strong>Mobile:</strong> {{ current_user.mobile }}</p>
+        </div>
+
+        <!-- Appointments Table -->
+        <div class="mt-4">
+            <h3>Your Appointments</h3>
+            {% if current_user.appointments %}
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Caregiver</th>
+                            <th>Scheduled Date</th>
+                            <th>Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for appointment in current_user.appointments %}
+                        <tr>
+                            <td>{{ appointment.caregiver.name }}</td>
+                            <td>{{ appointment.schedule_date }}</td>
+                            <td>{{ appointment.notes if appointment.notes else 'No notes provided' }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>You don't have any scheduled appointments.</p>
+            {% endif %}
+        </div>
+
+        <!-- Profile Edit Link -->
+        <div class="mt-4">
+            <a href="{{ url_for('edit_patient_profile') }}" class="btn btn-primary">Edit Profile</a>
+        </div>
+
+        <!-- Logout Link -->
+        <div class="mt-4">
+            <a href="{{ url_for('logout') }}" class="btn btn-danger">Logout</a>
+        </div>
+    </div>
+
+    <!-- JavaScript dependencies for Bootstrap's components -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>
